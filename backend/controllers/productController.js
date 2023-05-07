@@ -12,15 +12,20 @@ const createProduct = tryCatchError(async (req, res, next) => {
   });
 });
 
-
 // Get all product
 const getAllProducts = tryCatchError(async (req, res) => {
-    console.log(req.query)
-   new ApiFeature(Product.find(),req.query.keyword)
-  const products = await Product.find();
+
+  const resultPerPage = 5
+  const productCount = await Product.countDocuments()
+  console.log(req.query);
+  const apiFeature = new ApiFeature(Product.find(), req.query)
+    .search()
+    .filter().pagination(resultPerPage)
+  const products = await apiFeature.query;
   res.status(200).json({
     success: true,
     products,
+    productCount
   });
 });
 
@@ -34,11 +39,12 @@ const getProductDetails = tryCatchError(async (req, res, next) => {
     res.status(200).json({
       sucsess: true,
       product,
+      productCount
     });
   }
 });
-// Update Product -- Admin
 
+// Update Product -- Admin
 const updateProduct = tryCatchError(async (req, res) => {
   let product = await Product.findById(req.params.id);
   if (!product) {
@@ -56,7 +62,6 @@ const updateProduct = tryCatchError(async (req, res) => {
     product,
   });
 });
-
 
 // Delete Product
 
