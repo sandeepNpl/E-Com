@@ -64,7 +64,6 @@ const updateProduct = tryCatchError(async (req, res) => {
 });
 
 // Delete Product
-
 const deleteProduct = tryCatchError(async (req, res, next) => {
   let product = await Product.findByIdAndDelete(req.params.id);
 
