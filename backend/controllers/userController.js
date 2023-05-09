@@ -36,7 +36,7 @@ const userLogin = tryCatchError(async(req, res, next)=>{
         return next(new Error("Invalid Email or password"), 401)
     }
 
-    const isPasswordMatched = user.comparePassword(password);
+    const isPasswordMatched = await user.comparePassword(password);
     if(!isPasswordMatched){
         return next(new Error("Invalid Email or password"), 401)
     }

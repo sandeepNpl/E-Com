@@ -62,8 +62,9 @@ userSchema.methods.getJwtToken = function () {
 };
 
 // Compare Password For login user
-userSchema.methods.comparePassword = function(enteredPassword){
-  return bcrypt.compare(enteredPassword, this.password);
+userSchema.methods.comparePassword = async function(enteredPassword){
+  const hash = bcrypt.hashSync(this.password, 10);
+  return await  bcrypt.compare(enteredPassword, hash);
 }
 
 //Export the model
