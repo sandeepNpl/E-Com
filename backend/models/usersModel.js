@@ -2,6 +2,7 @@ const mongoose = require("mongoose"); // Erase if already required
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema({
@@ -41,7 +42,6 @@ var userSchema = new mongoose.Schema({
   },
 
   resetPasswordToken: String,
-  resetPasswordTokenExpired: Date,
 });
 
 // Hash Password
@@ -53,7 +53,6 @@ userSchema.pre("save", async function (next) {
   this.password = hash;
 });
 
-
 // JWT Token Generates
 userSchema.methods.getJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRETE, {
@@ -62,10 +61,24 @@ userSchema.methods.getJwtToken = function () {
 };
 
 // Compare Password For login user
-userSchema.methods.comparePassword = async function(enteredPassword){
+userSchema.methods.comparePassword = async function (enteredPassword) {
   const hash = bcrypt.hashSync(this.password, 10);
-  return await  bcrypt.compare(enteredPassword, hash);
-}
+  return await bcrypt.compare(enteredPassword, hash);
+};
+
+// Genearte token for reset password
+userSchema.methods.getResetPasswordToken= function () {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  // generating token and add  resetPasswordToken to user Schema
+  // this. resetPasswordToken = crypto
+  //   .createHash("sha256")
+  //   .update(resetToken) 
+  //   .digest("hex");
+
+  this.resetPasswordTokenExpired = Date.now() + 15 * 60 * 1000;
+  return resetToken
+};
 
 //Export the model
 module.exports = mongoose.model("User", userSchema);
