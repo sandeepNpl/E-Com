@@ -9,7 +9,6 @@ dotenv.config({
     path:"backend/config/config.env"
 })
 
-
 // Connect to DataBase 
 connectDataBase ()
 
